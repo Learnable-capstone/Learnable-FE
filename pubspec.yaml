@@ -47,6 +47,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+  flutter_svg: ^2.0.4
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -57,6 +59,32 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/images/
+  fonts:
+    - family: Spoqa
+      fonts:
+        - asset: assets/fonts/Spoqa Han Sans Bold.ttf
+          weight: 900
+        - asset: assets/fonts/Spoqa Han Sans Light.ttf
+          weight: 800
+        - asset: assets/fonts/Spoqa Han Sans Regular.ttf
+          weight: 700
+        - asset: assets/fonts/Spoqa Han Sans Thin.ttf
+          weight: 600
+        - asset: assets/fonts/SpoqaHanSansNeo-Bold.otf
+          weight: 500
+        - asset: assets/fonts/SpoqaHanSansNeo-Light.otf
+          weight: 400
+        - asset: assets/fonts/SpoqaHanSansNeo-Medium.otf
+          weight: 300
+        - asset: assets/fonts/SpoqaHanSansNeo-Regular.otf
+          weight: 200
+        - asset: assets/fonts/SpoqaHanSansNeo-Thin.otf
+          weight: 100
+
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:
