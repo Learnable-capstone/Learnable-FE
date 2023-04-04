@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'tutorial_screen3.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'tutorial_screen2.dart';
 import '../const/button_style.dart';
 import '../const/text_style.dart';
+import 'package:learnable/login/social_login.dart';
 
-class TutorialScreen extends StatefulWidget {
-  const TutorialScreen({super.key});
+class TutorialScreen3 extends StatefulWidget {
+  const TutorialScreen3({Key? key}) : super(key: key);
 
   @override
-  State<TutorialScreen> createState() => _TutorialScreenState();
+  State<TutorialScreen3> createState() => _TutorialScreen3State();
 }
 
-class _TutorialScreenState extends State<TutorialScreen> {
+class _TutorialScreen3State extends State<TutorialScreen3> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,8 +29,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   const SizedBox(height: 121),
                   _tab(),
                   const SizedBox(height: 95),
-                  _rectangle6(),
-                  _rectangle7(),
+                  _fire(),
                   const SizedBox(height: 51),
                   _bigText(),
                 ],
@@ -47,26 +47,15 @@ class _TutorialScreenState extends State<TutorialScreen> {
     return Container(
       alignment: Alignment.center,
       child: SvgPicture.asset(
-        'assets/images/tab1.svg',
+        'assets/images/tab3.svg',
       ),
     );
   }
-  Widget _rectangle6() {
+  Widget _fire() {
     return Container(
-      margin: EdgeInsets.only(left: 87),
-      alignment: Alignment.topLeft,
+      alignment: Alignment.center,
       child: Image.asset(
-        'assets/images/Rectangle6.png',
-      ),
-    );
-  }
-  Widget _rectangle7() {
-    return Container(
-
-      margin: EdgeInsets.only(right: 65),
-      alignment: Alignment.bottomRight,
-      child: Image.asset(
-        'assets/images/Rectangle7.png',
+        'assets/images/fire.png',
       ),
     );
   }
@@ -75,7 +64,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
     return Container(
       alignment: Alignment.center,
       child: Text(
-        '채팅만으로 쉽게\n컴퓨터 지식을 학습해봐요!',
+        '복습도\n챗봇과 함께 철저하게!',
         style: MyTextStyle.CbS23W700,
         textAlign: TextAlign.center,
       ),
@@ -90,7 +79,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TutorialScreen2()),
+            MaterialPageRoute(builder: (context) => const SocialLogin()),
           );
         },
         style: MyButtonStyle.nextButtonStyle,
@@ -102,3 +91,4 @@ class _TutorialScreenState extends State<TutorialScreen> {
     );
   }
 }
+

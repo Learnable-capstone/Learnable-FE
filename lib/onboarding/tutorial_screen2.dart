@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'tutorial_screen3.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'tutorial_screen2.dart';
 import '../const/button_style.dart';
 import '../const/text_style.dart';
 
-class TutorialScreen extends StatefulWidget {
-  const TutorialScreen({super.key});
+class TutorialScreen2 extends StatefulWidget {
+  const TutorialScreen2({Key? key}) : super(key: key);
 
   @override
-  State<TutorialScreen> createState() => _TutorialScreenState();
+  State<TutorialScreen2> createState() => _TutorialScreen2State();
 }
 
-class _TutorialScreenState extends State<TutorialScreen> {
+class _TutorialScreen2State extends State<TutorialScreen2> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -28,8 +28,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   const SizedBox(height: 121),
                   _tab(),
                   const SizedBox(height: 95),
-                  _rectangle6(),
-                  _rectangle7(),
+                  _qeustionMark(),
+                  _qeustionMark2(),
                   const SizedBox(height: 51),
                   _bigText(),
                 ],
@@ -47,26 +47,26 @@ class _TutorialScreenState extends State<TutorialScreen> {
     return Container(
       alignment: Alignment.center,
       child: SvgPicture.asset(
-        'assets/images/tab1.svg',
+        'assets/images/tab2.svg',
       ),
     );
   }
-  Widget _rectangle6() {
+  Widget _qeustionMark() {
     return Container(
-      margin: EdgeInsets.only(left: 87),
+      margin: const EdgeInsets.only(left: 115),
       alignment: Alignment.topLeft,
       child: Image.asset(
-        'assets/images/Rectangle6.png',
+        'assets/images/Question Mark.png',
       ),
     );
   }
-  Widget _rectangle7() {
+  Widget _qeustionMark2() {
     return Container(
 
-      margin: EdgeInsets.only(right: 65),
+      margin: const EdgeInsets.only(right: 107),
       alignment: Alignment.bottomRight,
       child: Image.asset(
-        'assets/images/Rectangle7.png',
+        'assets/images/Question Mark2.png',
       ),
     );
   }
@@ -75,7 +75,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
     return Container(
       alignment: Alignment.center,
       child: Text(
-        '채팅만으로 쉽게\n컴퓨터 지식을 학습해봐요!',
+        '모르는 게 있다면\n챗봇에게 물어봐요',
         style: MyTextStyle.CbS23W700,
         textAlign: TextAlign.center,
       ),
@@ -90,7 +90,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TutorialScreen2()),
+            MaterialPageRoute(builder: (context) => TutorialScreen3()),
           );
         },
         style: MyButtonStyle.nextButtonStyle,
@@ -102,3 +102,4 @@ class _TutorialScreenState extends State<TutorialScreen> {
     );
   }
 }
+

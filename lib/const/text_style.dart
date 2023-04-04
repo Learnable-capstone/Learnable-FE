@@ -23,4 +23,28 @@ class MyTextStyle {
     fontWeight: FontWeight.w700,
     height: 1.2,
   );
+
+  static TextStyle CgrS20W800 = TextStyle(
+    color: MyColors.green800,
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+  );
+
+  static TextStyle CgS16W500 = TextStyle(
+    color: MyColors.gray500,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    height: 1.2,
+  );
+
+  static TextStyle CgrS70W700 = TextStyle(
+    color: MyColors.green700,
+    fontSize: 70,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    foreground: Paint()
+      ..strokeWidth = 2.0
+      ..color = MyColors.green600,
+  );
 }

@@ -16,9 +16,9 @@ class MyColors {
 
   //green 계열
   static Color green900 = const Color(0xffB1E9A3);
-  static Color green800 = const Color(0xff001359);
-  static Color green700 = const Color(0xff001D86);
-  static Color green600 = const Color(0xff0026B2);
+  static Color green800 = const Color(0xff54BFEE);
+  static Color green700 = const Color(0xffC7EEFF);
+  static Color green600 = const Color(0xff40AFE0);
   static Color green500 = const Color(0xff0030DF);
   static Color green400 = const Color(0xff3359E5);
   static Color green300 = const Color(0xff6683EC);
