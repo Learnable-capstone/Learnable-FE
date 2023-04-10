@@ -43,8 +43,19 @@ class MyTextStyle {
     fontSize: 70,
     fontWeight: FontWeight.w700,
     height: 1.2,
-    foreground: Paint()
-      ..strokeWidth = 2.0
-      ..color = MyColors.green600,
+  );
+
+  static TextStyle CgS70W500 = TextStyle(
+    color: MyColors.gray500,
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+  );
+
+  static TextStyle CbS30W500 = TextStyle(
+    color: MyColors.black,
+    fontSize: 30,
+    fontWeight: FontWeight.w500,
+    height: 1.2,
   );
 }
