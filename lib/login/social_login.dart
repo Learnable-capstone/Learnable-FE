@@ -20,6 +20,11 @@ class _SocialLoginState extends State<SocialLogin> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    double imageScaleFactor = screenWidth > 500 ? 1.0 : 0.5;
+    double imageSizeGPTeacher = 500 * imageScaleFactor;
+    double imageSizeChatbot = 500 * imageScaleFactor;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -44,21 +49,24 @@ class _SocialLoginState extends State<SocialLogin> {
           ),
           Padding(
             padding: EdgeInsets.all(screenWidth * 0.05),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: screenHeight * 0.2),
-                _bigText(),
-                _bigText2(),
-                if (screenWidth > 500) _GPTeacher(),
-                _chatbotCharacter(),
-                SizedBox(height: screenHeight * 0.2),
-                _kakaoLogin(),
-                SizedBox(height: screenHeight * 0.02),
-                _appleLogin(),
-                SizedBox(height: screenHeight * 0.02),
-                _googleLogin(),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: screenHeight * 0.2),
+                  _bigText(),
+                  _bigText2(),
+                  if (screenWidth > 500)
+                    _GPTeacher(),
+                  _chatbotCharacter(),
+                  SizedBox(height: screenHeight * 0.2),
+                  _kakaoLogin(),
+                  SizedBox(height: screenHeight * 0.02),
+                  _appleLogin(),
+                  SizedBox(height: screenHeight * 0.02),
+                  _googleLogin(),
+                ],
+              ),
             ),
           ),
         ],
