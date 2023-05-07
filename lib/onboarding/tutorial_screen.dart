@@ -34,7 +34,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   _bigText(),
                 ],
               ),
-              _nextButton()
+              //_nextButton()
               // _tutorialImage(),
             ],
           ),

@@ -34,7 +34,7 @@ class _TutorialScreen2State extends State<TutorialScreen2> {
                   _bigText(),
                 ],
               ),
-              _nextButton()
+              // _nextButton()
               // _tutorialImage(),
             ],
           ),
@@ -82,24 +82,24 @@ class _TutorialScreen2State extends State<TutorialScreen2> {
     );
   }
 
-  Widget _nextButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 54,
-      child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => TutorialScreen3()),
-          );
-        },
-        style: MyButtonStyle.nextButtonStyle,
-        child: Text(
-          '시작하기',
-          style: MyTextStyle.CwS30W700,
-        ),
-      ),
-    );
-  }
+  // Widget _nextButton() {
+  //   return SizedBox(
+  //     width: double.infinity,
+  //     height: 54,
+  //     child: TextButton(
+  //       onPressed: () {
+  //         Navigator.push(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => TutorialScreen3()),
+  //         );
+  //       },
+  //       style: MyButtonStyle.nextButtonStyle,
+  //       child: Text(
+  //         '시작하기',
+  //         style: MyTextStyle.CwS30W700,
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 

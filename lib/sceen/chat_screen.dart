@@ -10,7 +10,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController _controller = TextEditingController();
-  List<String> _messages = [];
+  List<Map<String, dynamic>> _messages = [];
 
   @override
   void dispose() {
@@ -20,50 +20,72 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _sendMessage(String text) async {
     setState(() {
-      _messages.add('User: $text');
+      _messages.add({'type': 'user', 'text': text});
     });
     _controller.clear();
 
     try {
-      // Replace with your REST API endpoint
       final response = await http.post(
-          Uri.parse('http://43.201.186.151:8080/api/v1/chat'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'question': text.toString(),
-          })
+        Uri.parse('http://43.201.186.151:8080/api/v1/chat/test'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'question': text.toString(),
+        }),
       );
 
+      var answer = jsonDecode(utf8.decode(response.bodyBytes));
       if (response.statusCode == 200) {
         setState(() {
-          _messages.add('Bot: ${response.body}');
-          print('${response.body}');
+          _messages.add({
+            'type': 'bot',
+            'text': answer['choices'][0]['message']['content']
+          });
         });
       } else {
         setState(() {
-          _messages.add('Bot: Error occurred while sending the message.');
+          _messages.add({'type': 'bot', 'text': 'Error occurred while sending the message.'});
         });
       }
     } catch (e) {
       setState(() {
-        _messages.add('Bot: Error occurred while sending the message.');
+        _messages.add({'type': 'bot', 'text': 'Error occurred while sending the message.'});
       });
     }
+  }
+
+  Widget _buildMessage(Map<String, dynamic> message) {
+    final bool isUserMessage = message['type'] == 'user';
+    return Align(
+      alignment:
+      isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: isUserMessage ? Colors.blue : Colors.grey[300],
+        ),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
+        child: Text(
+          message['text'],
+          style: TextStyle(color: isUserMessage ? Colors.white : Colors.black),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                children: _messages
-                    .map((message) => ListTile(title: Text(message)))
-                    .toList(),
+                children: _messages.map(_buildMessage).toList(),
               ),
             ),
           ),

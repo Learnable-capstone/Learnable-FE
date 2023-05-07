@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:learnable/onboarding/tutorial_screen.dart';
+import 'package:learnable/onboarding/tutorial_tabbar.dart';
 
 import 'const/colors.dart';
 import 'const/input_decoration.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         ),
         primarySwatch: Colors.green,
       ),
-      home: TutorialScreen(),
+      home: TutorialTabbar(),
     );
   }
 }
