@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:learnable/sceen/chat_screen.dart';
 import '../const/colors.dart';
 import '../const/text_style.dart';
 import 'chat_room.dart';
@@ -13,6 +14,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  var data =[1,2,3,4];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +76,9 @@ class _MainScreenState extends State<MainScreen> {
               _textBox(),
               const SizedBox(height: 26),
               _floatingButton(),
-              //_chatList()
+              Expanded( // ListView 추가
+                child: _chatList(),
+              )
             ],
           ),
         ],
@@ -138,35 +143,24 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _chatList() {
-    return SliverList(
-        delegate: SliverChildBuilderDelegate((BuildContext context, int i) {
-      return ListTile(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute<Widget>(builder: (BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: const Text('ListTile Hero')),
-                body: Center(
-                  child: Hero(
-                    tag: 'ListTile-Hero',
-                    child: Material(
-                      child: ListTile(
-                        title: Text(i.toString()),
-                        subtitle: const Text('Tap here to go back'),
-                        tileColor: Colors.blue[700],
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
-          );
-        },title: Column(),
-      );
-    }));
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Text(data[index].toString()), // 리스트뷰 아이템의 제목
+          subtitle: Text('Subtitle ${index + 1}'), // 리스트뷰 아이템의 부제목
+          leading: CircleAvatar(child: Text('${index + 1}')), // 리스트뷰 아이템의 왼쪽에 표시되는 아이콘
+          trailing: Icon(Icons.arrow_forward_ios), // 리스트뷰 아이템의 오른쪽에 표시되는 아이콘
+          onTap: () {
+            // 리스트뷰 아이템을 클릭했을 때 수행되는 동작
+            print('Item ${index + 1} is clicked.');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  ChatScreen()),
+            );
+          },
+        );
+      },
+    );
   }
 }

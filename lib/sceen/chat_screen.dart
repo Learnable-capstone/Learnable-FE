@@ -1,133 +1,100 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
-
-
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  List<ChatMessage> _messages = [];
-  final TextEditingController _textController = TextEditingController();
+  TextEditingController _controller = TextEditingController();
+  List<String> _messages = [];
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendMessage(String text) async {
+    setState(() {
+      _messages.add('User: $text');
+    });
+    _controller.clear();
+
+    try {
+      // Replace with your REST API endpoint
+      final response = await http.post(
+          Uri.parse('http://43.201.186.151:8080/api/v1/chat'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'question': text.toString(),
+          })
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _messages.add('Bot: ${response.body}');
+          print('${response.body}');
+        });
+      } else {
+        setState(() {
+          _messages.add('Bot: Error occurred while sending the message.');
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _messages.add('Bot: Error occurred while sending the message.');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("챗봇"),
-      ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              reverse: true,
-              itemCount: _messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  padding: EdgeInsets.all(8.0),
-                  child: _messages[index],
-                );
-              },
+            child: SingleChildScrollView(
+              child: Column(
+                children: _messages
+                    .map((message) => ListTile(title: Text(message)))
+                    .toList(),
+              ),
             ),
           ),
           Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-              borderRadius: BorderRadius.circular(30),
-            ),
-            margin: EdgeInsets.all(16.0),
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "메시지를 입력하세요",
-                      contentPadding: EdgeInsets.all(16.0),
-                    ),
-                    onSubmitted: _handleSubmitted,
+                    controller: _controller,
+                    decoration: InputDecoration(hintText: 'Type your message'),
+                    onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                        _sendMessage(value);
+                      }
+                    },
                   ),
                 ),
-                FloatingActionButton(
+                IconButton(
                   onPressed: () {
-                    _handleSubmitted(_textController.text);
+                    if (_controller.text.trim().isNotEmpty) {
+                      _sendMessage(_controller.text);
+                    }
                   },
-                  child: Icon(Icons.send),
+                  icon: Icon(Icons.send),
                 ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  void _handleSubmitted(String text) {
-    _textController.clear();
-    ChatMessage message = ChatMessage(
-      text: text,
-      name: "사용자",
-      isUser: true,
-    );
-    setState(() {
-      _messages.insert(0, message);
-    });
-    // 챗봇 API 호출 및 응답 처리
-  }
-}
-
-class ChatMessage extends StatelessWidget {
-  final String text;
-  final String name;
-  final bool isUser;
-
-  ChatMessage({
-    required this.text,
-    required this.name,
-    required this.isUser,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: EdgeInsets.only(right: 16.0),
-          child: CircleAvatar(
-            child: Text(name[0]),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment:
-            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 8.0),
-                child: Text(text),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
