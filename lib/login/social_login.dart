@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:learnable/sceen/main_screen.dart';
+import 'package:learnable/screen/main_screen.dart';
 import '../const/button_style.dart';
 import '../const/colors.dart';
 import '../const/text_style.dart';

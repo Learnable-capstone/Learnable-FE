@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:learnable/sceen/chat_screen.dart';
+import 'package:learnable/screen/chat_screen.dart';
 import '../const/colors.dart';
 import '../const/text_style.dart';
 import 'chat_room.dart';
@@ -14,7 +17,26 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  var data =[1,2,3,4];
+  var chatRoom =[];
+
+  Future<void> getChatRoom() async {
+    var result = await http.get(Uri.parse(
+        'http://43.201.186.151:8080/chatrooms?memberId=1'));
+    var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
+    setState(() {
+      for (var i=0; i < resultJson['data']['chatRoomResponses'].length; i++) {
+        chatRoom.add({'title':resultJson['data']['chatRoomResponses'][i]['title'],
+        'subjectId' : resultJson['data']['chatRoomResponses'][i]['subjectId']});
+      }
+      print(resultJson['data']['chatRoomResponses'].length);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getChatRoom();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,21 +166,30 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _chatList() {
     return ListView.builder(
-      itemCount: data.length,
+      itemCount: chatRoom.length,
       itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text(data[index].toString()), // 리스트뷰 아이템의 제목
-          subtitle: Text('Subtitle ${index + 1}'), // 리스트뷰 아이템의 부제목
-          leading: CircleAvatar(child: Text('${index + 1}')), // 리스트뷰 아이템의 왼쪽에 표시되는 아이콘
-          trailing: Icon(Icons.arrow_forward_ios), // 리스트뷰 아이템의 오른쪽에 표시되는 아이콘
-          onTap: () {
-            // 리스트뷰 아이템을 클릭했을 때 수행되는 동작
-            print('Item ${index + 1} is clicked.');
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) =>  ChatScreen()),
-            );
-          },
+        return Column(
+          children: [
+            ListTile(
+              title: Text(chatRoom[index]['title'].toString()), // 리스트뷰 아이템의 제목
+              subtitle: Text(chatRoom[index]['subjectId'].toString()), // 리스트뷰 아이템의 부제목
+              //leading: CircleAvatar(child: Text('${index + 1}')), // 리스트뷰 아이템의 왼쪽에 표시되는 아이콘
+              trailing: Icon(Icons.arrow_forward_ios), // 리스트뷰 아이템의 오른쪽에 표시되는 아이콘
+              onTap: () {
+                // 리스트뷰 아이템을 클릭했을 때 수행되는 동작
+                print('Item ${index + 1} is clicked.');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  ChatScreen()),
+                );
+              },
+            ),
+            Divider(
+              color: Colors.grey[400],
+              thickness: 1,
+              height: 20,
+            ),
+          ],
         );
       },
     );
