@@ -56,8 +56,7 @@ class _SocialLoginState extends State<SocialLogin> {
                   SizedBox(height: screenHeight * 0.2),
                   _bigText(),
                   _bigText2(),
-                  if (screenWidth > 500)
-                    _GPTeacher(),
+                  if (screenWidth > 500) _GPTeacher(),
                   _chatbotCharacter(),
                   SizedBox(height: screenHeight * 0.2),
                   _kakaoLogin(),
@@ -73,6 +72,7 @@ class _SocialLoginState extends State<SocialLogin> {
       ),
     );
   }
+
   Widget _GPTeacher() {
     return Container(
       alignment: Alignment.center,
@@ -105,13 +105,8 @@ class _SocialLoginState extends State<SocialLogin> {
 
   Widget _bigText2() {
     return Container(
-      alignment: Alignment.center,
-      child: Text(
-        'GPTeacher',
-        style: MyTextStyle.CgrS70W700,
-        textAlign: TextAlign.center,
-      ),
-    );
+        alignment: Alignment.center,
+        child: Image.asset('assets/images/titleText.png'));
   }
 
   Widget _kakaoLogin() {
@@ -151,7 +146,4 @@ class _SocialLoginState extends State<SocialLogin> {
       ),
     );
   }
-
 }
-
-

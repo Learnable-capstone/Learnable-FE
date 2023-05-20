@@ -17,16 +17,18 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  var chatRoom =[];
+  var chatRoom = [];
 
   Future<void> getChatRoom() async {
-    var result = await http.get(Uri.parse(
-        'http://43.201.186.151:8080/chatrooms?memberId=1'));
+    var result = await http
+        .get(Uri.parse('http://43.201.186.151:8080/chatrooms?memberId=1'));
     var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
     setState(() {
-      for (var i=0; i < resultJson['data']['chatRoomResponses'].length; i++) {
-        chatRoom.add({'title':resultJson['data']['chatRoomResponses'][i]['title'],
-        'subjectId' : resultJson['data']['chatRoomResponses'][i]['subjectId']});
+      for (var i = 0; i < resultJson['data']['chatRoomResponses'].length; i++) {
+        chatRoom.add({
+          'title': resultJson['data']['chatRoomResponses'][i]['title'],
+          'subjectId': resultJson['data']['chatRoomResponses'][i]['subjectId']
+        });
       }
       print(resultJson['data']['chatRoomResponses'].length);
     });
@@ -98,12 +100,39 @@ class _MainScreenState extends State<MainScreen> {
               _textBox(),
               const SizedBox(height: 26),
               _floatingButton(),
-              Expanded( // ListView 추가
+              Expanded(
+                // ListView 추가
                 child: _chatList(),
               )
             ],
           ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Color(0xFFB1E9A3),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {},
+              iconSize: 40,
+              color: Color(0xFF7AC38F),
+            ),
+            IconButton(
+              icon: Icon(Icons.bookmark),
+              onPressed: () {},
+              iconSize: 40,
+              color: Color(0xCFE0FFD9),
+            ),
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {},
+              iconSize: 40,
+              color: Color(0xCFE0FFD9),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -125,18 +154,17 @@ class _MainScreenState extends State<MainScreen> {
       alignment: Alignment.center,
       child: Stack(
         children: [
-          Image.asset(
-            'assets/images/textBackground.png',
+          Center(
+            child: Image.asset(
+              'assets/images/textBackground.png',
+            ),
           ),
-          Positioned(
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
+          Center(
             child: Container(
+              padding: EdgeInsets.only(top: 20),
               child: Text(
-                'Hello, World!',
-                style: MyTextStyle.CbS23W700,
+                '안녕하세요, 러너블 님!\n 오늘의 학습을 시작해볼까요?',
+                style: MyTextStyle.CbS15W700,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -172,15 +200,17 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             ListTile(
               title: Text(chatRoom[index]['title'].toString()), // 리스트뷰 아이템의 제목
-              subtitle: Text(chatRoom[index]['subjectId'].toString()), // 리스트뷰 아이템의 부제목
+              subtitle: Text(
+                  chatRoom[index]['subjectId'].toString()), // 리스트뷰 아이템의 부제목
               //leading: CircleAvatar(child: Text('${index + 1}')), // 리스트뷰 아이템의 왼쪽에 표시되는 아이콘
-              trailing: Icon(Icons.arrow_forward_ios), // 리스트뷰 아이템의 오른쪽에 표시되는 아이콘
+              trailing:
+                  Icon(Icons.arrow_forward_ios), // 리스트뷰 아이템의 오른쪽에 표시되는 아이콘
               onTap: () {
                 // 리스트뷰 아이템을 클릭했을 때 수행되는 동작
                 print('Item ${index + 1} is clicked.');
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  ChatScreen()),
+                  MaterialPageRoute(builder: (context) => ChatScreen()),
                 );
               },
             ),
