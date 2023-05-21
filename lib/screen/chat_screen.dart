@@ -31,12 +31,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _fetchBotMessage() async {
     try {
-      final subjectIdInt = int.parse(widget.subjectId);
-      print(widget.chatroomId + 1);
-
       final response = await http.get(
         Uri.parse(
-            'http://43.201.186.151:8080/botmessages/${widget.chatroomId + 1}/questions/${subjectIdInt + 1}'),
+            'http://43.201.186.151:8080/botmessages/${widget.chatroomId + 1}/questions/${widget.subjectId}'),
       );
 
       if (response.statusCode == 200) {
