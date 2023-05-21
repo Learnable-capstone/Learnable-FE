@@ -9,8 +9,13 @@ import 'package:http/http.dart' as http;
 class ChatScreen extends StatefulWidget {
   final String title;
   final String subjectId;
+  final int chatroomId;
 
-  const ChatScreen({Key? key, required this.title, required this.subjectId})
+  const ChatScreen(
+      {Key? key,
+      required this.title,
+      required this.subjectId,
+      required this.chatroomId})
       : super(key: key);
 
   @override
@@ -27,10 +32,11 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _fetchBotMessage() async {
     try {
       final subjectIdInt = int.parse(widget.subjectId);
+      print(widget.chatroomId + 1);
 
       final response = await http.get(
         Uri.parse(
-            'http://43.201.186.151:8080/botmessages/1/questions/${subjectIdInt + 1}'),
+            'http://43.201.186.151:8080/botmessages/${widget.chatroomId + 1}/questions/${subjectIdInt + 1}'),
       );
 
       if (response.statusCode == 200) {
@@ -73,7 +79,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://43.201.186.151:8080/usermessages/chat?chatroomId=1'),
+        Uri.parse(
+            'http://43.201.186.151:8080/usermessages/chat?chatroomId=${widget.chatroomId + 1}'),
         headers: {
           'Content-Type': 'application/json',
         },

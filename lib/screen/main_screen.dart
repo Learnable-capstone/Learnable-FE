@@ -230,6 +230,7 @@ class _MainScreenState extends State<MainScreen> {
                     builder: (context) => ChatScreen(
                       title: chatRoom[index]['title'].toString(),
                       subjectId: chatRoom[index]['subjectId'].toString(),
+                      chatroomId: index,
                     ),
                   ),
                 );
