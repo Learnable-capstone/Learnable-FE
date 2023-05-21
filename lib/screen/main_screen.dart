@@ -185,7 +185,10 @@ class _MainScreenState extends State<MainScreen> {
             MaterialPageRoute(builder: (context) => const ChatRoom()),
           );
         },
-        child: Image.asset('assets/images/Add Btn.png'),
+        child: Image.asset(
+          'assets/images/Add Btn.png',
+          width: 50,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -197,11 +200,16 @@ class _MainScreenState extends State<MainScreen> {
       itemCount: chatRoom.length,
       itemBuilder: (BuildContext context, int index) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ListTile(
-              title: Text(chatRoom[index]['title'].toString()), // 리스트뷰 아이템의 제목
-              subtitle: Text(
-                  chatRoom[index]['subjectId'].toString()), // 리스트뷰 아이템의 부제목
+              title: Text(
+                chatRoom[index]['title'].toString(),
+                style: MyTextStyle.CbS15W700,
+              ), // 리스트뷰 아이템의 제목
+              leading: Image.asset('assets/images/tag' +
+                  chatRoom[index]['subjectId'].toString() +
+                  '.png'), // 리스트뷰 아이템의 부제목
               //leading: CircleAvatar(child: Text('${index + 1}')), // 리스트뷰 아이템의 왼쪽에 표시되는 아이콘
               trailing:
                   Icon(Icons.arrow_forward_ios), // 리스트뷰 아이템의 오른쪽에 표시되는 아이콘

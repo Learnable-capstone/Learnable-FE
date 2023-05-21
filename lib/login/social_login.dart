@@ -62,7 +62,7 @@ class _SocialLoginState extends State<SocialLogin> {
                   _kakaoLogin(),
                   SizedBox(height: screenHeight * 0.02),
                   _appleLogin(),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.01),
                   _googleLogin(),
                 ],
               ),
@@ -120,11 +120,37 @@ class _SocialLoginState extends State<SocialLogin> {
   }
 
   Widget _appleLogin() {
-    return Container(
-      alignment: Alignment.center,
-      child: Image.asset(
-        'assets/images/Apple Login.png',
-        fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Text(
+                  "준비중인 기능입니다!",
+                  style: MyTextStyle.CbS15W700,
+                  textAlign: TextAlign.center,
+                ),
+                actions: [
+                  Center(
+                    child: ElevatedButton(
+                      child: Text("확인"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ],
+              );
+            });
+      },
+      child: Container(
+        alignment: Alignment.center,
+        child: Image.asset(
+          'assets/images/Apple Login.png',
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
