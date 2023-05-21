@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:learnable/const/text_style.dart';
 import '../const/colors.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChatRoom extends StatefulWidget {
   const ChatRoom({Key? key}) : super(key: key);
@@ -12,22 +14,43 @@ class ChatRoom extends StatefulWidget {
 class _ChatRoomState extends State<ChatRoom> {
   TextEditingController _textEditingController = TextEditingController();
   final int _maxTextLength = 15;
+  var title;
+  var subjectId = 1;
 
   int _selectedTag = 0; // 선택된 태그 인덱스
 
-  List<String> _tagImages = [
-    'assets/images/tag0_off.png',
+  final List<String> _tagImages = [
     'assets/images/tag1_off.png',
     'assets/images/tag2_off.png',
     'assets/images/tag3_off.png',
     'assets/images/tag4_off.png',
     'assets/images/tag5_off.png',
+    'assets/images/tag6_off.png',
   ];
 
   @override
   void dispose() {
     _textEditingController.dispose();
     super.dispose();
+  }
+
+  void newChatroom() async {
+    var url = Uri.parse('http://43.201.186.151:8080/chatrooms');
+    var response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(<String, dynamic>{
+        'memberId': 1,
+        'subjectId': subjectId,
+        'title': title,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Successful POST request');
+    } else {
+      print('Request failed with status: ${response.statusCode}.');
+    }
   }
 
   @override
@@ -55,7 +78,12 @@ class _ChatRoomState extends State<ChatRoom> {
             ),
             actions: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  newChatroom();
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    Navigator.pop(context);
+                  });
+                },
                 child: Text(
                   "완료",
                   style: MyTextStyle.CgS70W500,
@@ -84,8 +112,15 @@ class _ChatRoomState extends State<ChatRoom> {
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
+              onChanged: (text) {
+                print(_textEditingController.text);
+                setState(() {
+                  title = _textEditingController.text;
+                  print(title);
+                });
+              },
               controller: _textEditingController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: '채팅방 제목을 입력해주세요.',
                 hintStyle: TextStyle(color: Colors.grey),
                 enabledBorder: UnderlineInputBorder(
@@ -121,6 +156,9 @@ class _ChatRoomState extends State<ChatRoom> {
                   onTap: () {
                     setState(() {
                       _selectedTag = i;
+                      subjectId = _selectedTag + 1;
+
+                      print(subjectId);
                     });
                   },
                   child: Image.asset(
@@ -140,6 +178,8 @@ class _ChatRoomState extends State<ChatRoom> {
                   onTap: () {
                     setState(() {
                       _selectedTag = i;
+                      subjectId = _selectedTag + 1;
+                      print(subjectId);
                     });
                   },
                   child: Image.asset(
