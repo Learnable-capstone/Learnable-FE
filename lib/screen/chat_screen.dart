@@ -18,6 +18,44 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _fetchBotMessage();
+  }
+
+  Future<void> _fetchBotMessage() async {
+    try {
+      final subjectIdInt = int.parse(widget.subjectId);
+
+      final response = await http.get(
+        Uri.parse(
+            'http://43.201.186.151:8080/botmessages/1/questions/${subjectIdInt + 1}'),
+      );
+
+      if (response.statusCode == 200) {
+        var botMessage = utf8.decode(response.bodyBytes);
+        setState(() {
+          _messages.add({'type': 'bot', 'text': botMessage});
+        });
+      } else {
+        setState(() {
+          _messages.add({
+            'type': 'bot',
+            'text': 'Error occurred while fetching the bot message.'
+          });
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _messages.add({
+          'type': 'bot',
+          'text': 'Error occurred while fetching the bot message.'
+        });
+      });
+    }
+  }
+
   TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> _messages = [];
 
@@ -35,7 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://43.201.186.151:8080/api/v1/chat/test'),
+        Uri.parse('http://43.201.186.151:8080/usermessages/chat?chatroomId=1'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -44,13 +82,10 @@ class _ChatScreenState extends State<ChatScreen> {
         }),
       );
 
-      var answer = jsonDecode(utf8.decode(response.bodyBytes));
       if (response.statusCode == 200) {
+        var answer = utf8.decode(response.bodyBytes);
         setState(() {
-          _messages.add({
-            'type': 'bot',
-            'text': answer['choices'][0]['message']['content']
-          });
+          _messages.add({'type': 'bot', 'text': answer});
         });
       } else {
         setState(() {
