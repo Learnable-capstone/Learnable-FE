@@ -111,20 +111,65 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessage(Map<String, dynamic> message) {
     final bool isUserMessage = message['type'] == 'user';
+    final bool isBotMessage = message['type'] == 'bot';
+
+    final alignment =
+        isUserMessage ? Alignment.centerRight : Alignment.centerLeft;
+    final backgroundColor =
+        isUserMessage ? Color(0xFFE0FFD9) : Color(0xFFDEF5FF);
+    final textColor = Colors.black;
+    final borderRadius = isBotMessage
+        ? BorderRadius.only(
+            topLeft: Radius.circular(8.0),
+            topRight: Radius.circular(8.0),
+            bottomRight: Radius.circular(8.0),
+          )
+        : BorderRadius.only(
+            topLeft: Radius.circular(8.0),
+            topRight: Radius.circular(8.0),
+            bottomLeft: Radius.circular(8.0),
+          );
+    final padding = EdgeInsets.fromLTRB(
+      isBotMessage ? 8.0 : 16.0,
+      8.0,
+      isBotMessage ? 16.0 : 8.0,
+      8.0,
+    );
+    final maxWidth = MediaQuery.of(context).size.width * 0.9;
+
+    final content = Text(
+      message['text'],
+      style: TextStyle(color: textColor),
+    );
+
     return Align(
-      alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: alignment,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 4.0),
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: isUserMessage ? Colors.blue : Colors.grey[300],
-        ),
-        constraints:
-            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
-        child: Text(
-          message['text'],
-          style: TextStyle(color: isUserMessage ? Colors.white : Colors.black),
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (isBotMessage)
+              Container(
+                margin: EdgeInsets.only(right: 5.0),
+                child: Image.asset(
+                  "assets/images/chatbot_bubble.png",
+                  width: 40,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            Expanded(
+              child: Container(
+                padding: padding,
+                decoration: BoxDecoration(
+                  borderRadius: borderRadius,
+                  color: backgroundColor,
+                ),
+                child: content,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -140,16 +185,18 @@ class _ChatScreenState extends State<ChatScreen> {
           child: AppBar(
             centerTitle: true,
             elevation: 8,
-            title: Column(children: [
-              Image.asset(
-                "assets/images/tag" + widget.subjectId + ".png",
-                width: 100,
-              ),
-              Text(
-                widget.title,
-                style: MyTextStyle.CbS23W700,
-              ),
-            ]),
+            title: Column(
+              children: [
+                Image.asset(
+                  "assets/images/tag" + widget.subjectId + ".png",
+                  width: 100,
+                ),
+                Text(
+                  widget.title,
+                  style: MyTextStyle.CbS23W700,
+                ),
+              ],
+            ),
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_rounded,
@@ -165,8 +212,9 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Container(
-            decoration:
-                BoxDecoration(border: Border.all(width: 1, color: Colors.grey)),
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: Colors.grey.shade300),
+            ),
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -175,32 +223,88 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            margin: EdgeInsets.only(bottom: 15.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(hintText: '답변을 입력하세요.'),
-                    onSubmitted: (value) {
-                      if (value.trim().isNotEmpty) {
-                        _sendMessage(value);
-                      }
-                    },
-                  ),
+          Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                margin: EdgeInsets.only(bottom: 15.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30.0),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  onPressed: () {
-                    if (_controller.text.trim().isNotEmpty) {
-                      _sendMessage(_controller.text);
-                    }
-                  },
-                  icon: Icon(Icons.send),
+                child: Column(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        // Handle "답안 예시 확인하기" button press
+                      },
+                      child: Text('답안 예시 확인하기', style: MyTextStyle.CgS16W500),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _fetchBotMessage();
+                      },
+                      child: Text('새로운 질문 확인하기', style: MyTextStyle.CgS16W500),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            style: TextStyle(fontSize: 16),
+                            decoration: InputDecoration(
+                              hintText: '답변을 입력하세요.',
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(vertical: 12.0),
+                              prefixIcon: Icon(Icons.message,
+                                  color: Colors.grey.shade200),
+                            ),
+                            onSubmitted: (value) {
+                              if (value.trim().isNotEmpty) {
+                                _sendMessage(value);
+                              }
+                            },
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 8.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30.0),
+                            color: Color(0xFF7AC38F),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xFF7AC38F).withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              if (_controller.text.trim().isNotEmpty) {
+                                _sendMessage(_controller.text);
+                              }
+                            },
+                            icon: Icon(Icons.send),
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
