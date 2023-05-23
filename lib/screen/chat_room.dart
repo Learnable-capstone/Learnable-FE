@@ -54,6 +54,15 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    for (String image in _tagImages) {
+      precacheImage(AssetImage(image), context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(

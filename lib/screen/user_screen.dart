@@ -130,30 +130,29 @@ class UserScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            InkResponse(
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => MainScreen()),
-                  (route) => false,
                 );
               },
-              child: Icon(Icons.home, size: 40, color: Color(0xCFE0FFD9)),
+              iconSize: 40,
+              color: Color(0xCFE0FFD9),
             ),
-            InkResponse(
-              onTap: () {},
-              child: Icon(Icons.bookmark, size: 40, color: Color(0xCFE0FFD9)),
+            IconButton(
+              icon: Icon(Icons.bookmark),
+              onPressed: () {},
+              iconSize: 40,
+              color: Color(0xCFE0FFD9),
             ),
-            InkResponse(
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserScreen()),
-                  (route) => false,
-                );
-              },
-              child: Icon(Icons.person, size: 40, color: Color(0xFF7AC38F)),
-            ),
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {},
+              iconSize: 40,
+              color: Color(0xFF7AC38F),
+            )
           ],
         ),
       ),
