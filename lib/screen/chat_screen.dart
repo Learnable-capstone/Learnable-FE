@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class ChatScreen extends StatefulWidget {
   final String title;
   final String subjectId;
-  final int chatroomId;
+  final String chatroomId;
 
   const ChatScreen({
     Key? key,
@@ -38,7 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://43.201.186.151:8080/botmessages/${widget.chatroomId + 1}/questions/${widget.subjectId}',
+          'http://43.201.186.151:8080/botmessages/${widget.chatroomId}/questions/${widget.subjectId}',
         ),
       );
 
@@ -67,15 +67,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _loadMessages() async {
     try {
+      print("chatroomId : " + widget.chatroomId);
       final response = await http.get(
         Uri.parse(
-          'http://43.201.186.151:8080/chatrooms/${widget.chatroomId + 1}',
+          'http://43.201.186.151:8080/chatrooms/${widget.chatroomId}',
         ),
       );
 
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
-
+        print("code200");
         var botMessages = (data['data']['botMessages'] as List<dynamic>)
             .map((message) => {
                   'type': 'bot',
@@ -138,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final response = await http.post(
         Uri.parse(
-          'http://43.201.186.151:8080/usermessages/chat?chatroomId=${widget.chatroomId + 1}',
+          'http://43.201.186.151:8080/usermessages/chat?chatroomId=${widget.chatroomId}',
         ),
         headers: {
           'Content-Type': 'application/json',

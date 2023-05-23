@@ -23,12 +23,14 @@ class _MainScreenState extends State<MainScreen> {
         .get(Uri.parse('http://43.201.186.151:8080/chatrooms?memberId=1'));
     var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
     setState(() {
-
       print(resultJson['data']['chatRoomResponses'].length);
       for (var i = 0; i < resultJson['data']['chatRoomResponses'].length; i++) {
         chatRoom.add({
           'title': resultJson['data']['chatRoomResponses'][i]['title'],
           'subjectId': resultJson['data']['chatRoomResponses'][i]['subjectId']
+              .toString(),
+          'chatroomId': resultJson['data']['chatRoomResponses'][i]['chatroomId']
+              .toString()
         });
       }
       print(resultJson);
@@ -190,9 +192,9 @@ class _MainScreenState extends State<MainScreen> {
             context,
             MaterialPageRoute(builder: (context) => const ChatRoom()),
           ).then((_) => setState(() {
-            chatRoom = [];
-            getChatRoom();
-          }));
+                chatRoom = [];
+                getChatRoom();
+              }));
         },
         child: Image.asset(
           'assets/images/Add Btn.png',
@@ -230,7 +232,7 @@ class _MainScreenState extends State<MainScreen> {
                     builder: (context) => ChatScreen(
                       title: chatRoom[index]['title'].toString(),
                       subjectId: chatRoom[index]['subjectId'].toString(),
-                      chatroomId: index,
+                      chatroomId: chatRoom[index]['chatroomId'].toString(),
                     ),
                   ),
                 );
