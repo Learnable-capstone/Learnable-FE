@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:learnable/const/text_style.dart';
 import '../const/colors.dart';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
@@ -11,29 +10,36 @@ class ChatScreen extends StatefulWidget {
   final String subjectId;
   final int chatroomId;
 
-  const ChatScreen(
-      {Key? key,
-      required this.title,
-      required this.subjectId,
-      required this.chatroomId})
-      : super(key: key);
+  const ChatScreen({
+    Key? key,
+    required this.title,
+    required this.subjectId,
+    required this.chatroomId,
+  }) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  TextEditingController _controller = TextEditingController();
+  List<Map<String, dynamic>> _messages = [];
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    _fetchBotMessage();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _loadMessages();
+    });
   }
 
   Future<void> _fetchBotMessage() async {
     try {
       final response = await http.get(
         Uri.parse(
-            'http://43.201.186.151:8080/botmessages/${widget.chatroomId + 1}/questions/${widget.subjectId}'),
+          'http://43.201.186.151:8080/botmessages/${widget.chatroomId + 1}/questions/${widget.subjectId}',
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -45,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           _messages.add({
             'type': 'bot',
-            'text': 'Error occurred while fetching the bot message.'
+            'text': 'Error occurred while fetching the bot message.',
           });
         });
       }
@@ -53,18 +59,73 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         _messages.add({
           'type': 'bot',
-          'text': 'Error occurred while fetching the bot message.'
+          'text': 'Error occurred while fetching the bot message.',
         });
       });
     }
   }
 
-  TextEditingController _controller = TextEditingController();
-  List<Map<String, dynamic>> _messages = [];
+  Future<void> _loadMessages() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'http://43.201.186.151:8080/chatrooms/${widget.chatroomId + 1}',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        var botMessages = (data['data']['botMessages'] as List<dynamic>)
+            .map((message) => {
+                  'type': 'bot',
+                  'text': message['content'],
+                  'createdAt': message['createdAt'],
+                })
+            .toList();
+
+        var userMessages = (data['data']['userMessages'] as List<dynamic>)
+            .map((message) => {
+                  'type': 'user',
+                  'text': message['content'],
+                  'createdAt': message['createdAt'],
+                })
+            .toList();
+
+        var allMessages = [...userMessages, ...botMessages];
+        allMessages.sort((a, b) => a['createdAt'].compareTo(b['createdAt']));
+
+        setState(() {
+          _messages = allMessages;
+        });
+
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+
+        if (_messages.isEmpty) {
+          _fetchBotMessage();
+        }
+      } else {
+        setState(() {
+          _messages.add({
+            'type': 'bot',
+            'text': 'Error occurred while loading messages.',
+          });
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _messages.add({
+          'type': 'bot',
+          'text': 'Error occurred while loading messages.',
+        });
+      });
+    }
+  }
 
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -77,7 +138,8 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://43.201.186.151:8080/usermessages/chat?chatroomId=${widget.chatroomId + 1}'),
+          'http://43.201.186.151:8080/usermessages/chat?chatroomId=${widget.chatroomId + 1}',
+        ),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -91,11 +153,12 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           _messages.add({'type': 'bot', 'text': answer});
         });
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       } else {
         setState(() {
           _messages.add({
             'type': 'bot',
-            'text': 'Error occurred while sending the message.'
+            'text': 'Error occurred while sending the message.',
           });
         });
       }
@@ -103,7 +166,7 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         _messages.add({
           'type': 'bot',
-          'text': 'Error occurred while sending the message.'
+          'text': 'Error occurred while sending the message.',
         });
       });
     }
@@ -217,10 +280,12 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: _messages.map(_buildMessage).toList(),
-              ),
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                return _buildMessage(_messages[index]);
+              },
             ),
           ),
           Column(
@@ -246,13 +311,19 @@ class _ChatScreenState extends State<ChatScreen> {
                       onPressed: () {
                         // Handle "답안 예시 확인하기" button press
                       },
-                      child: Text('답안 예시 확인하기', style: MyTextStyle.CgS16W500),
+                      child: Text(
+                        '답안 예시 확인하기',
+                        style: MyTextStyle.CgS16W500,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
                         _fetchBotMessage();
                       },
-                      child: Text('새로운 질문 확인하기', style: MyTextStyle.CgS16W500),
+                      child: Text(
+                        '새로운 질문 확인하기',
+                        style: MyTextStyle.CgS16W500,
+                      ),
                     ),
                     Row(
                       children: [
