@@ -48,26 +48,54 @@ class _ChatScreenState extends State<ChatScreen> {
           _messages.add({'type': 'bot', 'text': botMessage});
         });
       } else {
-        setState(() {
-          _messages.add({
-            'type': 'bot',
-            'text': 'Error occurred while fetching the bot message.',
-          });
-        });
+        _showErrorMessage('Error occurred while fetching the bot message.');
       }
     } catch (e) {
-      setState(() {
-        _messages.add({
-          'type': 'bot',
-          'text': 'Error occurred while fetching the bot message.',
-        });
-      });
+      _showErrorMessage('Error occurred while fetching the bot message.');
+    }
+  }
+
+  Future<void> _showAnswer() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'http://43.201.186.151:8080/botmessages/${widget.chatroomId}/answers',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        var botMessage = utf8.decode(response.bodyBytes);
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: Text('답안 예시'),
+            content: Text(
+              botMessage,
+              style: MyTextStyle.CbS15W300,
+            ),
+            actions: [
+              Center(
+                child: ElevatedButton(
+                  child: Text("확인"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      } else {
+        _showErrorMessage('Error occurred while fetching the bot message.');
+      }
+    } catch (e) {
+      _showErrorMessage('Error occurred while fetching the bot message.');
     }
   }
 
   Future<void> _loadMessages() async {
     try {
-      print("chatroomId : " + widget.chatroomId);
       final response = await http.get(
         Uri.parse(
           'http://43.201.186.151:8080/chatrooms/${widget.chatroomId}',
@@ -76,7 +104,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
-        print("code200");
         var botMessages = (data['data']['botMessages'] as List<dynamic>)
             .map((message) => {
                   'type': 'bot',
@@ -106,20 +133,10 @@ class _ChatScreenState extends State<ChatScreen> {
           _fetchBotMessage();
         }
       } else {
-        setState(() {
-          _messages.add({
-            'type': 'bot',
-            'text': 'Error occurred while loading messages.',
-          });
-        });
+        _showErrorMessage('Error occurred while loading messages.');
       }
     } catch (e) {
-      setState(() {
-        _messages.add({
-          'type': 'bot',
-          'text': 'Error occurred while loading messages.',
-        });
-      });
+      _showErrorMessage('Error occurred while loading messages.');
     }
   }
 
@@ -156,20 +173,10 @@ class _ChatScreenState extends State<ChatScreen> {
         });
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       } else {
-        setState(() {
-          _messages.add({
-            'type': 'bot',
-            'text': 'Error occurred while sending the message.',
-          });
-        });
+        _showErrorMessage('Error occurred while sending the message.');
       }
     } catch (e) {
-      setState(() {
-        _messages.add({
-          'type': 'bot',
-          'text': 'Error occurred while sending the message.',
-        });
-      });
+      _showErrorMessage('Error occurred while sending the message.');
     }
   }
 
@@ -237,6 +244,15 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  void _showErrorMessage(String message) {
+    setState(() {
+      _messages.add({
+        'type': 'bot',
+        'text': message,
+      });
+    });
   }
 
   @override
@@ -310,7 +326,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        // Handle "답안 예시 확인하기" button press
+                        _showAnswer();
                       },
                       child: Text(
                         '답안 예시 확인하기',
