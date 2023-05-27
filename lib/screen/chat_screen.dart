@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:learnable/const/text_style.dart';
+import 'package:learnable/screen/main_screen.dart';
 import '../const/colors.dart';
 
 import 'package:http/http.dart' as http;
@@ -68,29 +69,45 @@ class _ChatScreenState extends State<ChatScreen> {
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (_) => AlertDialog(
-            title: Text('답안 예시'),
-            content: Text(
-              botMessage,
-              style: MyTextStyle.CbS15W300,
+          builder: (_) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            actions: [
-              Center(
-                child: ElevatedButton(
-                  child: Text("확인"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
+            child: Container(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '답안 예시',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    botMessage,
+                    style: MyTextStyle.CbS15W300,
+                  ),
+                  SizedBox(height: 16.0),
+                  ElevatedButton(
+                    child: Text("확인"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       } else {
-        _showErrorMessage('Error occurred while fetching the bot message.');
+        _showErrorMessage('Error occurred while loading the answer.');
       }
     } catch (e) {
-      _showErrorMessage('Error occurred while fetching the bot message.');
+      _showErrorMessage('Error occurred while loading the answer.');
     }
   }
 
@@ -137,6 +154,23 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     } catch (e) {
       _showErrorMessage('Error occurred while loading messages.');
+    }
+  }
+
+  Future<void> _deleteChatRoom() async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://43.201.186.151:8080/chatrooms/${widget.chatroomId}'),
+      );
+
+      if (response.statusCode == 200) {
+        // Chat room deleted successfully
+        print('Chat room deleted');
+      } else {
+        _showErrorMessage('Error occurred while deleting the chat room.');
+      }
+    } catch (e) {
+      _showErrorMessage('Error occurred while deleting the chat room.');
     }
   }
 
@@ -263,30 +297,66 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Container(
           margin: EdgeInsets.only(top: 10.0),
           child: AppBar(
-            centerTitle: true,
-            elevation: 8,
-            title: Column(
-              children: [
-                Image.asset(
-                  "assets/images/tag" + widget.subjectId + ".png",
-                  width: 100,
-                ),
-                Text(
-                  widget.title,
-                  style: MyTextStyle.CbS23W700,
-                ),
-              ],
-            ),
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_rounded,
-                color: MyColors.black,
+              centerTitle: true,
+              elevation: 8,
+              title: Column(
+                children: [
+                  Image.asset(
+                    "assets/images/tag" + widget.subjectId + ".png",
+                    width: 100,
+                  ),
+                  Text(
+                    widget.title,
+                    style: MyTextStyle.CbS23W700,
+                  ),
+                ],
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_rounded,
+                  color: MyColors.black,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('채팅방 삭제'),
+                        content: Text('채팅방을 삭제하시겠습니까?'),
+                        actions: [
+                          TextButton(
+                            child: Text('아니오'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: Text('예'),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              await _deleteChatRoom();
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => MainScreen()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.delete,
+                    size: 40.0,
+                  ),
+                  color: Colors.grey.shade300,
+                ),
+              ]),
         ),
       ),
       body: Column(

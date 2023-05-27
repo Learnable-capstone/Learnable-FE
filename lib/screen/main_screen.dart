@@ -147,7 +147,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _dog() {
     return Image.asset(
-      'assets/images/dog.png',
+      'assets/images/fox.png',
     );
   }
 

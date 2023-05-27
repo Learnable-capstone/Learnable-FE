@@ -74,7 +74,7 @@ class _ChatRoomState extends State<ChatRoom> {
             elevation: 8,
             title: Text(
               "채팅방 추가",
-              style: MyTextStyle.CbS30W500,
+              style: MyTextStyle.CbS23W700,
             ),
             leading: IconButton(
               icon: Icon(

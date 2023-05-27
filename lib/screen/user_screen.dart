@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:learnable/const/text_style.dart';
 import 'package:learnable/screen/main_screen.dart';
+import 'package:learnable/screen/profile_edit_screen.dart';
 import '../const/colors.dart';
 
-class UserScreen extends StatelessWidget {
+class UserScreen extends StatefulWidget {
+  @override
+  _UserScreenState createState() => _UserScreenState();
+}
+
+class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,15 +24,6 @@ class UserScreen extends StatelessWidget {
               "마이페이지",
               style: MyTextStyle.CbS23W700,
             ),
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_rounded,
-                color: MyColors.black,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
           ),
         ),
       ),
@@ -36,11 +33,11 @@ class UserScreen extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.only(left: 40),
+              padding: const EdgeInsets.only(left: 30),
               child: Row(
                 children: [
                   Flexible(
-                      child: Image.asset('assets/images/dog.png'), flex: 3),
+                      child: Image.asset('assets/images/fox.png'), flex: 3),
                   SizedBox(width: 10),
                   Flexible(
                     child: Column(
@@ -80,8 +77,7 @@ class UserScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfileEditScreen(),
-                          ),
+                              builder: (context) => ProfileEditScreen()),
                         );
                       },
                     ),
@@ -155,20 +151,6 @@ class UserScreen extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ProfileEditScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("프로필 수정"),
-      ),
-      body: Center(
-        child: Text("프로필 수정 화면"),
       ),
     );
   }
