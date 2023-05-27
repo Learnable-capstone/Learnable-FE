@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:learnable/const/text_style.dart';
 import 'package:learnable/screen/main_screen.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../const/colors.dart';
 
 import 'package:http/http.dart' as http;
@@ -26,6 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> _messages = [];
   ScrollController _scrollController = ScrollController();
+  bool _loading = false;
 
   @override
   void initState() {
@@ -184,6 +186,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _sendMessage(String text) async {
     setState(() {
       _messages.add({'type': 'user', 'text': text});
+      _loading = true; // Show loading animation
     });
     _controller.clear();
 
@@ -204,6 +207,7 @@ class _ChatScreenState extends State<ChatScreen> {
         var answer = utf8.decode(response.bodyBytes);
         setState(() {
           _messages.add({'type': 'bot', 'text': answer});
+          _loading = false; // Hide loading animation
         });
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       } else {
@@ -375,6 +379,11 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
+          if (_loading) // Show loading animation if _loading is true
+            LoadingAnimationWidget.waveDots(
+              color: Colors.grey.shade300,
+              size: 60,
+            ),
           Column(
             children: [
               Container(

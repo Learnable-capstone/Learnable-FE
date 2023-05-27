@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_native_splash: ^2.2.4
+  loading_animation_widget:
 
   http: ^0.13.3
 
