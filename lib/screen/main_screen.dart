@@ -124,7 +124,30 @@ class _MainScreenState extends State<MainScreen> {
             ),
             IconButton(
               icon: Icon(Icons.bookmark),
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Text(
+                          "준비중인 기능입니다!",
+                          style: MyTextStyle.CbS15W700,
+                          textAlign: TextAlign.center,
+                        ),
+                        actions: [
+                          Center(
+                            child: ElevatedButton(
+                              child: Text("확인"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    });
+              },
               iconSize: 40,
               color: Color(0xCFE0FFD9),
             ),

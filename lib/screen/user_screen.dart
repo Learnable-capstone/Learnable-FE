@@ -37,7 +37,9 @@ class _UserScreenState extends State<UserScreen> {
               child: Row(
                 children: [
                   Flexible(
-                      child: Image.asset('assets/images/fox.png'), flex: 3),
+                    child: Image.asset('assets/images/fox.png'),
+                    flex: 2,
+                  ),
                   SizedBox(width: 10),
                   Flexible(
                     child: Column(
