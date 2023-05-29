@@ -1,9 +1,14 @@
 import 'dart:ui';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learnable/screen/main_screen.dart';
+import 'package:learnable/login/login_platform.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import '../const/button_style.dart';
 import '../const/colors.dart';
 import '../const/text_style.dart';
@@ -16,6 +21,54 @@ class SocialLogin extends StatefulWidget {
 }
 
 class _SocialLoginState extends State<SocialLogin> {
+  LoginPlatform _loginPlatform = LoginPlatform.none;
+
+  Future signwithKakao() async {
+    try {
+      bool isInstalled = await isKakaoTalkInstalled();
+
+      OAuthToken token = isInstalled
+          ? await UserApi.instance.loginWithKakaoTalk()
+          : await UserApi.instance.loginWithKakaoAccount();
+
+      final url = Uri.https('kapi.kakao.com', '/v2/user/me');
+
+      final response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer ${token.accessToken}'
+        },
+      );
+
+      final profileInfo = json.decode(response.body);
+      print(profileInfo.toString());
+
+      setState(() {
+        _loginPlatform = LoginPlatform.kakao;
+      });
+    } catch (error) {
+      print('카카오톡으로 로그인 실패 $error');
+    }
+  }
+
+  void signOut() async {
+    switch (_loginPlatform) {
+      case LoginPlatform.google:
+        break;
+      case LoginPlatform.kakao:
+        await UserApi.instance.logout();
+        break;
+      case LoginPlatform.apple:
+        break;
+      case LoginPlatform.none:
+        break;
+    }
+
+    setState(() {
+      _loginPlatform = LoginPlatform.none;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -110,11 +163,14 @@ class _SocialLoginState extends State<SocialLogin> {
   }
 
   Widget _kakaoLogin() {
-    return Container(
-      alignment: Alignment.center,
-      child: Image.asset(
-        'assets/images/Kakao Login.png',
-        fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: signwithKakao,
+      child: Container(
+        alignment: Alignment.center,
+        child: Image.asset(
+          'assets/images/Kakao Login.png',
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
