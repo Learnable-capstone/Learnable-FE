@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learnable/screen/main_screen.dart';
 import 'package:learnable/login/login_platform.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../const/button_style.dart';
 import '../const/colors.dart';
 import '../const/text_style.dart';
@@ -46,8 +47,26 @@ class _SocialLoginState extends State<SocialLogin> {
       setState(() {
         _loginPlatform = LoginPlatform.kakao;
       });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MainScreen()),
+      );
     } catch (error) {
       print('카카오톡으로 로그인 실패 $error');
+    }
+  }
+
+  Future signwithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser != null) {
+      print('name = ${googleUser.displayName}');
+      print('email = ${googleUser.email}');
+      print('id = ${googleUser.id}');
+
+      setState(() {
+        _loginPlatform = LoginPlatform.google;
+      });
     }
   }
 
@@ -178,28 +197,10 @@ class _SocialLoginState extends State<SocialLogin> {
   Widget _appleLogin() {
     return GestureDetector(
       onTap: () {
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: Text(
-                  "준비중인 기능입니다!",
-                  style: MyTextStyle.CbS15W700,
-                  textAlign: TextAlign.center,
-                ),
-                actions: [
-                  Center(
-                    child: ElevatedButton(
-                      child: Text("확인"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                ],
-              );
-            });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
       },
       child: Container(
         alignment: Alignment.center,
@@ -214,10 +215,7 @@ class _SocialLoginState extends State<SocialLogin> {
   Widget _googleLogin() {
     return TextButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-        );
+        signwithGoogle();
       },
       child: Container(
         alignment: Alignment.center,
