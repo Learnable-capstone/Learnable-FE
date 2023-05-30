@@ -10,6 +10,7 @@ import 'package:learnable/screen/main_screen.dart';
 import 'package:learnable/login/login_platform.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../const/button_style.dart';
 import '../const/colors.dart';
 import '../const/text_style.dart';
@@ -67,6 +68,32 @@ class _SocialLoginState extends State<SocialLogin> {
       setState(() {
         _loginPlatform = LoginPlatform.google;
       });
+    }
+  }
+
+  Future signwithApple() async {
+    try {
+      final AuthorizationCredentialAppleID credentialAppleID =
+          await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName
+        ],
+        webAuthenticationOptions: WebAuthenticationOptions(
+          clientId: "learnable.example.com",
+          redirectUri: Uri.parse(
+              "https://concrete-billowy-emmental.glitch.me/callbacks/sign_in_with_apple"),
+        ),
+      );
+      print('credential.state = $credentialAppleID');
+      print('credential.state = ${credentialAppleID.email}');
+      print('credential.state = ${credentialAppleID.userIdentifier}');
+
+      setState(() {
+        _loginPlatform = LoginPlatform.apple;
+      });
+    } catch (error) {
+      print('error = $error');
     }
   }
 
@@ -197,10 +224,7 @@ class _SocialLoginState extends State<SocialLogin> {
   Widget _appleLogin() {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
-        );
+        signwithApple();
       },
       child: Container(
         alignment: Alignment.center,
@@ -213,8 +237,8 @@ class _SocialLoginState extends State<SocialLogin> {
   }
 
   Widget _googleLogin() {
-    return TextButton(
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         signwithGoogle();
       },
       child: Container(
