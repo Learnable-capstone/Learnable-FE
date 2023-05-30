@@ -17,6 +17,9 @@ void main() async {
   // secure storage 인스턴스 생성
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
+  //테스트용
+  await _storage.delete(key: 'userId'); // 저장된 UserId 삭제
+
   // 저장된 UserId 불러오기
   String? userId = await _storage.read(key: 'userId');
 

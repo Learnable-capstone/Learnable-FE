@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learnable/screen/main_screen.dart';
+import 'package:learnable/screen/agreement_screen.dart';
 import 'package:learnable/login/login_platform.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -58,7 +59,7 @@ class _SocialLoginState extends State<SocialLogin> {
       await saveUserId(1.toString());
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
+        MaterialPageRoute(builder: (context) => const AgreementScreen()),
       );
     } catch (error) {
       print('카카오톡으로 로그인 실패 $error');

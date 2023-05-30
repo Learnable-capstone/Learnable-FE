@@ -24,6 +24,13 @@ class MyTextStyle {
     height: 1.2,
   );
 
+  static TextStyle CbS15W500 = TextStyle(
+    color: MyColors.black,
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    height: 1.2,
+  );
+
   static TextStyle CbS15W300 = TextStyle(
     color: MyColors.black,
     fontSize: 15,
