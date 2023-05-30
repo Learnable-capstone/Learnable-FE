@@ -7,6 +7,8 @@ import '../const/colors.dart';
 import '../const/text_style.dart';
 import 'chat_room.dart';
 import 'user_screen.dart';
+import 'package:learnable/login/social_login.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -19,23 +21,41 @@ class _MainScreenState extends State<MainScreen> {
   var chatRoom = [];
 
   Future<void> getChatRoom() async {
-    var result = await http
-        .get(Uri.parse('http://43.201.186.151:8080/chatrooms?memberId=1'));
-    var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
-    setState(() {
-      print(resultJson['data']['chatRoomResponses'].length);
-      for (var i = 0; i < resultJson['data']['chatRoomResponses'].length; i++) {
-        chatRoom.add({
-          'title': resultJson['data']['chatRoomResponses'][i]['title'],
-          'subjectId': resultJson['data']['chatRoomResponses'][i]['subjectId']
-              .toString(),
-          'chatroomId': resultJson['data']['chatRoomResponses'][i]['chatroomId']
-              .toString()
-        });
-      }
-      print(resultJson);
-      print(resultJson['data']['chatRoomResponses'].length);
-    });
+    // secure storage 인스턴스 생성
+    final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+    // 저장된 UserId 불러오기
+    String? userId = await _storage.read(key: 'userId');
+
+    if (userId != null) {
+      var result = await http.get(
+          Uri.parse('http://43.201.186.151:8080/chatrooms?memberId=$userId'));
+      var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
+      setState(() {
+        print(resultJson['data']['chatRoomResponses'].length);
+        for (var i = 0;
+            i < resultJson['data']['chatRoomResponses'].length;
+            i++) {
+          chatRoom.add({
+            'title': resultJson['data']['chatRoomResponses'][i]['title'],
+            'subjectId': resultJson['data']['chatRoomResponses'][i]['subjectId']
+                .toString(),
+            'chatroomId': resultJson['data']['chatRoomResponses'][i]
+                    ['chatroomId']
+                .toString()
+          });
+        }
+        print(resultJson);
+        print(resultJson['data']['chatRoomResponses'].length);
+      });
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SocialLogin()), // social_login.dart로 이동
+      );
+      return; // 함수 종료
+    }
   }
 
   @override

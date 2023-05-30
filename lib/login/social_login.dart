@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learnable/screen/main_screen.dart';
@@ -24,6 +25,11 @@ class SocialLogin extends StatefulWidget {
 
 class _SocialLoginState extends State<SocialLogin> {
   LoginPlatform _loginPlatform = LoginPlatform.none;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  Future<void> saveUserId(String userId) async {
+    await _storage.write(key: 'userId', value: userId);
+  }
 
   Future signwithKakao() async {
     try {
@@ -49,6 +55,7 @@ class _SocialLoginState extends State<SocialLogin> {
         _loginPlatform = LoginPlatform.kakao;
       });
 
+      await saveUserId(1.toString());
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const MainScreen()),
@@ -64,6 +71,10 @@ class _SocialLoginState extends State<SocialLogin> {
       print('name = ${googleUser.displayName}');
       print('email = ${googleUser.email}');
       print('id = ${googleUser.id}');
+
+      // 함수 호출할 부분
+
+      await saveUserId(1.toString());
 
       setState(() {
         _loginPlatform = LoginPlatform.google;
@@ -109,6 +120,8 @@ class _SocialLoginState extends State<SocialLogin> {
       case LoginPlatform.none:
         break;
     }
+
+    await _storage.delete(key: 'userId'); // 저장된 UserId 삭제
 
     setState(() {
       _loginPlatform = LoginPlatform.none;
@@ -159,7 +172,7 @@ class _SocialLoginState extends State<SocialLogin> {
                   _chatbotCharacter(),
                   SizedBox(height: screenHeight * 0.2),
                   _kakaoLogin(),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.01),
                   _appleLogin(),
                   SizedBox(height: screenHeight * 0.01),
                   _googleLogin(),
