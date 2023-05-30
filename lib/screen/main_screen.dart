@@ -19,15 +19,19 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   var chatRoom = [];
+  String? nickname;
+  String? userId;
 
   Future<void> getChatRoom() async {
     // secure storage 인스턴스 생성
     final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
     // 저장된 UserId 불러오기
-    String? userId = await _storage.read(key: 'userId');
+    userId = await _storage.read(key: 'userId');
 
     if (userId != null) {
+      await getUser(); // getUser() 함수 호출 위치 변경
+
       var result = await http.get(
           Uri.parse('http://43.201.186.151:8080/chatrooms?memberId=$userId'));
       var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
@@ -49,6 +53,28 @@ class _MainScreenState extends State<MainScreen> {
         print(resultJson['data']['chatRoomResponses'].length);
       });
     } else {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text(
+                "로그인 후 이용 가능합니다.",
+                style: MyTextStyle.CbS15W700,
+                textAlign: TextAlign.center,
+              ),
+              actions: [
+                Center(
+                  child: ElevatedButton(
+                    child: Text("확인"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            );
+          });
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -56,6 +82,14 @@ class _MainScreenState extends State<MainScreen> {
       );
       return; // 함수 종료
     }
+  }
+
+  Future<void> getUser() async {
+    var result = await http
+        .get(Uri.parse('http://43.201.186.151:8080/user/userInfo/$userId'));
+    var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
+    nickname = resultJson["username"];
+    print(resultJson.toString());
   }
 
   @override
@@ -214,7 +248,7 @@ class _MainScreenState extends State<MainScreen> {
             child: Container(
               padding: EdgeInsets.only(top: 20),
               child: Text(
-                '안녕하세요, 러너블 님!\n 오늘의 학습을 시작해볼까요?',
+                '안녕하세요, $nickname님!\n 오늘의 학습을 시작해볼까요?',
                 style: MyTextStyle.CbS15W700,
                 textAlign: TextAlign.center,
               ),

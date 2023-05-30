@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'dart:convert';
 import 'dart:io';
 
@@ -30,6 +29,34 @@ class _SocialLoginState extends State<SocialLogin> {
 
   Future<void> saveUserId(String userId) async {
     await _storage.write(key: 'userId', value: userId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AgreementScreen()),
+    );
+  }
+
+  Future<void> signin(
+      String socialId, String socialType, String? name, String? email) async {
+    var url = Uri.parse('http://43.201.186.151:8080/user/login');
+    var response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(<String, dynamic>{
+        'username': name,
+        'email': email,
+        'socialType': socialType,
+        'socialId': socialId.toString()
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Successful POST request');
+      var responseData = jsonDecode(response.body);
+      var userId = responseData["userId"];
+      saveUserId(userId.toString());
+    } else {
+      print('Request failed with status: ${response.statusCode}.');
+    }
   }
 
   Future signwithKakao() async {
@@ -51,16 +78,14 @@ class _SocialLoginState extends State<SocialLogin> {
 
       final profileInfo = json.decode(response.body);
       print(profileInfo.toString());
+      print(profileInfo["id"].toString());
 
       setState(() {
         _loginPlatform = LoginPlatform.kakao;
       });
-
-      await saveUserId(1.toString());
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const AgreementScreen()),
-      );
+      signin(profileInfo["id"].toString(), "kakao",
+          profileInfo["properties"]["nickname"], null);
+      //await saveUserId(1.toString());
     } catch (error) {
       print('카카오톡으로 로그인 실패 $error');
     }
@@ -73,9 +98,8 @@ class _SocialLoginState extends State<SocialLogin> {
       print('email = ${googleUser.email}');
       print('id = ${googleUser.id}');
 
-      // 함수 호출할 부분
-
-      await saveUserId(1.toString());
+      signin(googleUser.id.toString(), "google", googleUser.displayName,
+          googleUser.email);
 
       setState(() {
         _loginPlatform = LoginPlatform.google;
@@ -104,6 +128,8 @@ class _SocialLoginState extends State<SocialLogin> {
       setState(() {
         _loginPlatform = LoginPlatform.apple;
       });
+      signin(credentialAppleID.userIdentifier.toString(), "apple",
+          credentialAppleID.givenName, credentialAppleID.email);
     } catch (error) {
       print('error = $error');
     }
