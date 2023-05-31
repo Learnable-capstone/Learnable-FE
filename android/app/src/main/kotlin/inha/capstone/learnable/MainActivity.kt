@@ -1,4 +1,4 @@
-package com.example.learnable
+package inha.capstone.learnable
 
 import io.flutter.embedding.android.FlutterActivity
 

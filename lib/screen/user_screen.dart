@@ -43,7 +43,7 @@ class _UserScreenState extends State<UserScreen> {
       var result = await http
           .delete(Uri.parse('http://43.201.186.151:8080/user/$userId'));
     }
-    ;
+    await _storage.delete(key: 'userId'); // 저장된 UserId 삭제
     return;
   }
 
