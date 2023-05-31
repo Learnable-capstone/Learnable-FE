@@ -4,9 +4,19 @@ import '../const/colors.dart';
 import 'dart:convert';
 import 'package:learnable/screen/user_screen.dart';
 import 'package:learnable/screen/main_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ProfileEditScreen extends StatefulWidget {
+  final String? nickname;
+  final int profileIdx;
+
+  const ProfileEditScreen({
+    Key? key,
+    required this.nickname,
+    required this.profileIdx,
+  }) : super(key: key);
+
   @override
   _ProfileEditScreenState createState() => _ProfileEditScreenState();
 }
@@ -23,6 +33,26 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     'assets/images/boiled_egg.png',
     'assets/images/fried_egg.png'
   ];
+
+  Future updateProfile(int newidx) async {
+    final FlutterSecureStorage _storage = const FlutterSecureStorage();
+    String? userId = await _storage.read(key: 'userId');
+    if (userId != null) {
+      var url = Uri.parse('http://43.201.186.151:8080/user/userInfo/$userId');
+      var response = await http.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(<String, dynamic>{
+          'username': widget.nickname,
+          'profileIdx': newidx
+        }),
+      );
+      print("유저 정보 수정 성공");
+    } else {
+      print("로그인이 필요합니다.");
+    }
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +75,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 color: MyColors.black,
               ),
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserScreen()),
-                );
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => UserScreen()),
+                // );
+                Navigator.pop(context);
               },
             ),
           ),
@@ -95,6 +126,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedImageIndex = index;
+                                        print(index.toString());
                                       });
                                       Navigator.pop(context);
                                     },
@@ -124,7 +156,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             TextField(
               maxLength: 10,
               decoration: InputDecoration(
-                hintText: "러너블",
+                hintText: widget.nickname,
                 counterText: "${text.length}/10",
               ),
               onChanged: (value) {
@@ -143,10 +175,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       MaterialStateProperty.all<Color>(Color(0xFF7AC38F)),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => MainScreen()),
-                  );
+                  updateProfile(selectedImageIndex);
+                  Future.delayed(Duration(seconds: 1), () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => MainScreen()),
+                    );
+                  });
                 },
                 child: Text(
                   "완료",

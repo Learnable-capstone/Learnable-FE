@@ -2,14 +2,81 @@ import 'package:flutter/material.dart';
 import 'package:learnable/const/text_style.dart';
 import 'package:learnable/screen/main_screen.dart';
 import 'package:learnable/screen/profile_edit_screen.dart';
+import 'package:learnable/login/social_login.dart';
 import '../const/colors.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class UserScreen extends StatefulWidget {
+  final String? nickname;
+  final int profileIdx;
+  final String? createdAt;
+
+  const UserScreen({
+    Key? key,
+    required this.nickname,
+    required this.profileIdx,
+    required this.createdAt,
+  }) : super(key: key);
+
   @override
   _UserScreenState createState() => _UserScreenState();
 }
 
 class _UserScreenState extends State<UserScreen> {
+  List<String> imageList = [
+    'assets/images/fox.png',
+    'assets/images/dog.png',
+    'assets/images/cat.png',
+    'assets/images/robot.png',
+    'assets/images/boiled_egg.png',
+    'assets/images/fried_egg.png'
+  ];
+
+  Future<void> withdraw() async {
+    String? userId;
+    final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+    // 저장된 UserId 불러오기
+    userId = await _storage.read(key: 'userId');
+    if (userId != null) {
+      var result = await http
+          .delete(Uri.parse('http://43.201.186.151:8080/user/$userId'));
+    }
+    ;
+    return;
+  }
+
+  Future<void> showWithdrawalConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('회원 탈퇴'),
+          content: Text('탈퇴하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('아니오'),
+            ),
+            TextButton(
+              onPressed: () {
+                withdraw();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => (SocialLogin())),
+                );
+              },
+              child: Text('예'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +104,7 @@ class _UserScreenState extends State<UserScreen> {
               child: Row(
                 children: [
                   Flexible(
-                    child: Image.asset('assets/images/fox.png'),
+                    child: Image.asset(imageList[widget.profileIdx]),
                     flex: 2,
                   ),
                   SizedBox(width: 10),
@@ -46,11 +113,11 @@ class _UserScreenState extends State<UserScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "러너블",
+                          "${widget.nickname}",
                           style: MyTextStyle.CbS23W700,
                         ),
                         Text(
-                          "가입일: 2023.03.18",
+                          "가입일: ${widget.createdAt}",
                           style: MyTextStyle.CgS16W500,
                         ),
                       ],
@@ -79,7 +146,10 @@ class _UserScreenState extends State<UserScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProfileEditScreen()),
+                              builder: (context) => ProfileEditScreen(
+                                    nickname: widget.nickname,
+                                    profileIdx: widget.profileIdx,
+                                  )),
                         );
                       },
                     ),
@@ -115,6 +185,15 @@ class _UserScreenState extends State<UserScreen> {
                       onTap: () {},
                     ),
                     const Divider(height: 1, color: Colors.grey),
+                    ListTile(
+                      title: Text(
+                        '회원 탈퇴',
+                        style: MyTextStyle.CbS20W500,
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios),
+                      onTap:
+                          showWithdrawalConfirmationDialog, // Call the withdrawal confirmation dialog
+                    ),
                   ],
                 ),
               ],

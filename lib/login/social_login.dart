@@ -45,7 +45,8 @@ class _SocialLoginState extends State<SocialLogin> {
         'username': name,
         'email': email,
         'socialType': socialType,
-        'socialId': socialId.toString()
+        'socialId': socialId.toString(),
+        'profileIdx': 0
       }),
     );
 

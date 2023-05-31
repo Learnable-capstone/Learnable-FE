@@ -9,6 +9,7 @@ import 'chat_room.dart';
 import 'user_screen.dart';
 import 'package:learnable/login/social_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -21,6 +22,17 @@ class _MainScreenState extends State<MainScreen> {
   var chatRoom = [];
   String? nickname;
   String? userId;
+  int profileIdx = 0;
+  String? createdAt;
+
+  List<String> imageList = [
+    'assets/images/fox.png',
+    'assets/images/dog.png',
+    'assets/images/cat.png',
+    'assets/images/robot.png',
+    'assets/images/boiled_egg.png',
+    'assets/images/fried_egg.png'
+  ];
 
   Future<void> getChatRoom() async {
     // secure storage 인스턴스 생성
@@ -89,6 +101,10 @@ class _MainScreenState extends State<MainScreen> {
         .get(Uri.parse('http://43.201.186.151:8080/user/userInfo/$userId'));
     var resultJson = jsonDecode(utf8.decode(result.bodyBytes));
     nickname = resultJson["username"];
+    profileIdx = resultJson["profileIdx"];
+    DateTime createdDate = DateTime.parse(resultJson["createdAt"]);
+    createdAt = DateFormat.yMMMd('en_US').format(createdDate);
+    print(createdAt);
     print(resultJson.toString());
   }
 
@@ -210,7 +226,12 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => UserScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => UserScreen(
+                            nickname: nickname,
+                            profileIdx: profileIdx,
+                            createdAt: createdAt,
+                          )),
                 );
               },
               iconSize: 40,
@@ -223,9 +244,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _dog() {
-    return Image.asset(
-      'assets/images/fox.png',
-    );
+    return Image.asset(imageList[profileIdx]);
   }
 
   Widget _chatbot() {
@@ -235,6 +254,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _textBox() {
+    if (nickname == null) {
+      getUser();
+    }
     return Container(
       alignment: Alignment.center,
       child: Stack(
