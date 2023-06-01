@@ -3,6 +3,7 @@ import 'package:learnable/const/text_style.dart';
 import '../const/colors.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ChatRoom extends StatefulWidget {
   const ChatRoom({Key? key}) : super(key: key);
@@ -35,12 +36,14 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   void newChatroom() async {
+    final FlutterSecureStorage _storage = const FlutterSecureStorage();
+    String? userId = await _storage.read(key: 'userId');
     var url = Uri.parse('http://43.201.186.151:8080/chatrooms');
     var response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(<String, dynamic>{
-        'memberId': 1,
+        'memberId': userId,
         'subjectId': subjectId,
         'title': title,
       }),
