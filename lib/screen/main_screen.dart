@@ -80,18 +80,18 @@ class _MainScreenState extends State<MainScreen> {
                   child: ElevatedButton(
                     child: Text("확인"),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SocialLogin()), // social_login.dart로 이동
+                      );
                     },
                   ),
                 ),
               ],
             );
           });
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SocialLogin()), // social_login.dart로 이동
-      );
       return; // 함수 종료
     }
   }

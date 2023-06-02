@@ -15,6 +15,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../const/button_style.dart';
 import '../const/colors.dart';
 import '../const/text_style.dart';
+import 'package:intl/intl.dart';
 
 class SocialLogin extends StatefulWidget {
   const SocialLogin({Key? key}) : super(key: key);
@@ -33,6 +34,13 @@ class _SocialLoginState extends State<SocialLogin> {
       context,
       MaterialPageRoute(builder: (context) => const AgreementScreen()),
     );
+  }
+
+  String generateUniqueNumber() {
+    DateTime now = DateTime.now();
+    String timestamp = DateFormat('yyyyMMddHHmmss').format(now);
+    String uniqueNumber = 'guest_$timestamp';
+    return uniqueNumber;
   }
 
   Future<void> signin(
@@ -193,7 +201,7 @@ class _SocialLoginState extends State<SocialLogin> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: screenHeight * 0.2),
+                  SizedBox(height: screenHeight * 0.17),
                   _bigText(),
                   _bigText2(),
                   if (screenWidth > 500) _GPTeacher(),
@@ -204,6 +212,15 @@ class _SocialLoginState extends State<SocialLogin> {
                   _appleLogin(),
                   SizedBox(height: screenHeight * 0.01),
                   _googleLogin(),
+                  TextButton(
+                      onPressed: () {
+                        String tmpid = generateUniqueNumber();
+                        signin(tmpid, "guest", "게스트", null);
+                      },
+                      child: Text(
+                        "게스트 로그인",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      )),
                 ],
               ),
             ),
