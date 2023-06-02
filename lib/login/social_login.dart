@@ -217,7 +217,7 @@ class _SocialLoginState extends State<SocialLogin> {
     return Container(
       alignment: Alignment.center,
       child: Image.asset(
-        'assets/images/GPTeacher.png',
+        'assets/images/titleText.png',
       ),
     );
   }
