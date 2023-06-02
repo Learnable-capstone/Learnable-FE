@@ -34,7 +34,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     'assets/images/fried_egg.png'
   ];
 
-  Future updateProfile(int newidx) async {
+  Future updateProfile(int newidx, String nickname) async {
     final FlutterSecureStorage _storage = const FlutterSecureStorage();
     String? userId = await _storage.read(key: 'userId');
     if (userId != null) {
@@ -42,10 +42,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       var response = await http.patch(
         url,
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode(<String, dynamic>{
-          'username': widget.nickname,
-          'profileIdx': newidx
-        }),
+        body: jsonEncode(
+            <String, dynamic>{'username': nickname, 'profileIdx': newidx}),
       );
       print("유저 정보 수정 성공");
     } else {
@@ -156,7 +154,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             TextField(
               maxLength: 10,
               decoration: InputDecoration(
-                hintText: widget.nickname,
+                hintText: widget.nickname ?? '닉네임을 입력해주세요',
                 counterText: "${text.length}/10",
               ),
               onChanged: (value) {
@@ -175,7 +173,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       MaterialStateProperty.all<Color>(Color(0xFF7AC38F)),
                 ),
                 onPressed: () {
-                  updateProfile(selectedImageIndex);
+                  String updatedNickname =
+                      text.isNotEmpty ? text : widget.nickname ?? '';
+                  updateProfile(selectedImageIndex, updatedNickname);
                   Future.delayed(Duration(seconds: 1), () {
                     Navigator.pushReplacement(
                       context,
