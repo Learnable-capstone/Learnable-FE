@@ -3,6 +3,7 @@ import 'package:learnable/const/text_style.dart';
 import 'package:learnable/screen/main_screen.dart';
 import 'package:learnable/screen/profile_edit_screen.dart';
 import 'package:learnable/login/social_login.dart';
+import 'package:learnable/screen/policy_screen.dart';
 import '../const/colors.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -161,16 +162,12 @@ class _UserScreenState extends State<UserScreen> {
                         style: MyTextStyle.CbS20W500,
                       ),
                       trailing: Icon(Icons.arrow_forward_ios),
-                      onTap: () {},
-                    ),
-                    const Divider(height: 1, color: Colors.grey),
-                    ListTile(
-                      title: Text(
-                        "개인정보 처리방침",
-                        style: MyTextStyle.CbS20W500,
-                      ),
-                      trailing: Icon(Icons.arrow_forward_ios),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PolicyScreen()));
+                      },
                     ),
                     const Divider(height: 1, color: Colors.grey),
                     ListTile(

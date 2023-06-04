@@ -38,7 +38,7 @@ class _AgreementScreenState extends State<AgreementScreen> {
               padding: EdgeInsets.only(left: 13),
               width: 300,
               child: Text(
-                "GPTeacher 서비스를 이용하시기 위해서는\n필수 약관 동의가 필요합니다.",
+                "Learnable 서비스를 이용하시기 위해서는\n필수 약관 동의가 필요합니다.",
                 style: MyTextStyle.CgS16W500,
               ),
             ),
