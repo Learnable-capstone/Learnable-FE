@@ -69,7 +69,7 @@ GPT 3.5 기반의 챗봇이 나의 답변을 실시간으로 채점하고 피드
 로 접속하셔서 다운 후 실행하실 수 있습니다.
 #### 👩‍💻 2. 실행 환경 설정 후 파일 직접 실행
 - MAC OS의 경우 XCode, Android Studio, Flutter SDK 를 설치하여야 하고, Window의 경우 Android Studio, Flutter SDK를 설치해야 합니다. (이 경우 아이폰 에뮬레이터에서 테스트 불가능)
-- Window 기준 Flutter 개발 환경 구축 방법 링크 : https://brunch.co.kr/@mystoryg/114 
+- Flutter 개발 환경 구축 방법 링크 : https://flutter-ko.dev/get-started/install
 
 
 ## 🛠 아키텍처
